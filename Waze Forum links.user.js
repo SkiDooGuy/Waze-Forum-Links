@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name            Waze Forum links
 // @namespace       https://github.com/WazeDev/
-// @version         2021.10.24.01
+// @version         2021.10.24.02
 // @description     Add profile and beta links in Waze forum
 // @author          WazeDev
 // @contributor     crazycaveman
@@ -287,7 +287,7 @@
                 topicLink = HOST;
                 forum = 'f=' + homePage2[1]
                 hash = "hash=b31a0852";
-                mark_time = Date.now();
+                mark_time = 'mark_time' + Date.now();
             }else{
                 topicLink = $('.mark-read').prop('href');
                 let temp = topicLink.replace("?", "&");

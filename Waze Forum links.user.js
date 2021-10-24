@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name            Waze Forum links
 // @namespace       https://github.com/WazeDev/
-// @version         2021.10.22.01
+// @version         2021.10.24.01
 // @description     Add profile and beta links in Waze forum
 // @author          WazeDev
 // @contributor     crazycaveman
@@ -35,24 +35,24 @@
 
     function log(message, level = 0) {
         switch (level) {
-        case 1:
-        case 'error':
-            console.error('WFL: ', message);
-            break;
-        case 2:
-        case 'warn':
-            console.warn('WFL: ', message);
-            break;
-        case 3:
-        case 'info':
-            console.info('WFL: ', message);
-            break;
-        case 4:
-        case 'debug':
-            console.debug('WFL: ', message);
-            break;
-        default:
-            console.log('WFL: ', message);
+            case 1:
+            case 'error':
+                console.error('WFL: ', message);
+                break;
+            case 2:
+            case 'warn':
+                console.warn('WFL: ', message);
+                break;
+            case 3:
+            case 'info':
+                console.info('WFL: ', message);
+                break;
+            case 4:
+            case 'debug':
+                console.debug('WFL: ', message);
+                break;
+            default:
+                console.log('WFL: ', message);
         }
     }
 
@@ -77,7 +77,7 @@
         }
         Object.keys(defaults).forEach((prop) => {
             if (Object.prototype.hasOwnProperty.call(defaults, prop)
-            && !Object.prototype.hasOwnProperty.call(settings, prop)) {
+                && !Object.prototype.hasOwnProperty.call(settings, prop)) {
                 settings[prop] = defaults[prop];
             }
         });
@@ -103,7 +103,7 @@
             log('Beta status stored', cl.d);
             betaLinks();
         } else if (parseInt(settings.beta.updated, 10) + 7
-                < parseInt(d.getFullYear() + (`0${d.getMonth()}`).slice(-2) + (`0${d.getDate()}`).slice(-2), 10)) {
+                   < parseInt(d.getFullYear() + (`0${d.getMonth()}`).slice(-2) + (`0${d.getDate()}`).slice(-2), 10)) {
             let ifrm = $('<iframe>').attr('id', 'WUP_frame').hide();
             ifrm.load((event) => { // What to do once the iframe has loaded
                 log('iframe loaded', cl.d);
@@ -175,7 +175,7 @@
 
         // Re-enable memberlist button in dropdown
         const $MemberList =
-            `<wz-menu-item >
+              `<wz-menu-item >
                 <a class="no-blue-link" href="./memberlist.php" title="Members" role="menuitem">
                     <i class="icon fa-group fa-fw"></i><span>Members</span>
                 </a>
@@ -187,7 +187,7 @@
 
         // Add link to usergroups page to dropdown
         const $UserGroups =
-            `<wz-menu-item >
+              `<wz-menu-item >
                 <a class="no-blue-link" href="https://www.waze.com/forum/ucp.php?i=167" title="Usergroups" role="menuitem">
                     <i class="icon fa-group fa-fw"></i><span>Usergroups</span>
                 </a>
@@ -252,8 +252,8 @@
         // Add Moderator CP link to header (no way to verify if they have access or not that I know off)
         // const MCP = `
         //    <span style='padding:0 3px;'><a href="./mcp.php?i=main&amp;mode=front" title="Moderator Control Panel" role="menuitem">
-	//			<i class="icon fa-gavel fa-fw" aria-hidden="true" style='color:#3c4043;'></i>
-	//		</a></span>`;
+        //			<i class="icon fa-gavel fa-fw" aria-hidden="true" style='color:#3c4043;'></i>
+        //		</a></span>`;
         // $('#FL-Wrapper').prepend(MCP);
 
         // Put the "leave shadow topic" and "lock topic" options back on the move topic page
@@ -273,21 +273,32 @@
         const HOST = window.location.href;
         const FORUMNUM = HOST.search(/(f=[0-9]{1,3})/);
 
+        let homePage = HOST.replace("?", "&");
+        let homePage2 = homePage.split("f=");
+        let hash, forum, mark_time;
+        var topicLink
+
         if (FORUMNUM !== -1) {
             const MARKREAD = `<h5 class='forum-section-title wz-forums-grey-700'><a id='WFL-MarkRead' style='color:#55595e;'>Mark Forum(s) Read</a></h5>`;
             let forumList = $('.row-wrp.forum-section-title-wrp').get();
             $(forumList[0]).append(MARKREAD);
 
-            let topicLink = $('.mark-read').prop('href');
-            let temp = topicLink.replace("?", "&");
-            let temp2 = temp.split("&");
-            let hash, forum, mark_time;
-            for (let k = 0; k < temp2.length; k++) {
-                if (temp2[k].includes("hash=")) hash = temp2[k];
-                if (temp2[k].includes("f=")) forum = temp2[k];
-                if (temp2[k].includes("mark_time=")) mark_time = temp2[k];
-            }
+            if (homePage2[1] == 663 || homePage2[1] == 659 || homePage2[1] == 1155){
+                topicLink = HOST;
+                forum = 'f=' + homePage2[1]
+                hash = "hash=b31a0852";
+                mark_time = Date.now();
+            }else{
+                topicLink = $('.mark-read').prop('href');
+                let temp = topicLink.replace("?", "&");
+                let temp2 = temp.split("&");
 
+                for (let k = 0; k < temp2.length; k++) {
+                    if (temp2[k].includes("hash=")) hash = temp2[k];
+                    if (temp2[k].includes("f=")) forum = temp2[k];
+                    if (temp2[k].includes("mark_time=")) mark_time = temp2[k];
+                }
+            }
             let newURL = `https://www.waze.com/forum/viewforum.php?${hash}&${forum}&mark=forums&${mark_time}`;
             $('#WFL-MarkRead').prop('href', newURL);
         }

@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name            Waze Forum links
 // @namespace       https://github.com/WazeDev/
-// @version         2021.10.27.02
+// @version         2021.10.28.01
 // @description     Add profile and beta links in Waze forum
 // @author          WazeDev
 // @contributor     crazycaveman
@@ -353,12 +353,14 @@
                 if (temp2[k].includes("hash=")) hash = temp2[k];
                 if (temp2[k].includes("f=")) forum = temp2[k];
             }
-            if (settings.hash) {
-                hash = settings.hash;
-            } else if (settings.hash !== hash && hash) {
+
+            if (settings.hash !== hash && hash) { // jm6087 - flipped these if statements
                 settings.hash = hash;
                 saveSettings();
+            } else if (settings.hash) {
+                hash = settings.hash;
             }
+            if (hash != null) { //jm6087
             if (!forum) forum = '';
 
             let newURL = `https://www.waze.com/forum/viewforum.php?${hash}&${forum}&mark=forums&${time}`;
@@ -369,6 +371,7 @@
             $('#WFL-MarkRead1').prop('href', newURL1);
             $('#WFL-MarkRead2').prop('href', newURL2);
             $('#WFL-MarkRead3').prop('href', newURL3);
+        } else document.querySelector("#WFL-MarkRead").style="display: none"; // jm6087
         }
     }
 
